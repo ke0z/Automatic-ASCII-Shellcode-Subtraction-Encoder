@@ -2,6 +2,11 @@
 # Automatic ASCII Shellcode Subtraction Encoder
 Generates printable ASCII subtraction encoded shellcode in NASM assembly and python hex string format for inserting into exploits.
 
+# Credits
+This is a fork of the great work done by Elias Augusto.
+This repo will contain several style fixes and some other new features but the core
+is the same written by him.
+
 # Opt_Encoder.py
 Welcome to the future of...this program! The newly created, highly optimized encoder first tries encoding with one or two sub instructions before attempting the default three. This comes with numerous added benefits, including exponentially shorter payloads and improved badchar resistance.
 
