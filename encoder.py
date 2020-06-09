@@ -1,6 +1,11 @@
-# Automatic ASCII Shellcode Subtraction Encoder
-# Expands on BUGTREE's z3ncoder, which can encode individual 32 bit hex addresses, by taking in a full shellcode payload and outputting assembly
-# Written by Elias Augusto
+"""
+Automatic ASCII Shellcode Subtraction Encoder.
+
+Expands on BUGTREE's z3ncoder, which can encode individual 32 bit
+hex addresses, by taking in a full shellcode payload and outputting assembly
+Originally written by Elias Augusto
+Additional changes by Andres Roldan <aroldan [at] fluidattacks.com>
+"""
 
 import argparse
 from z3 import *
@@ -9,7 +14,7 @@ import re
 from textwrap import wrap
 
 
-def solve(b,bc):
+def solve(b, bc):
     """BUGTREE's function that sub encodes 32 bit hex addresses in 0xFFFFFFFF format."""
     s = Solver()
     bad_chars = [0x20, 0x80, 0x0A, 0x0D, 0x2F, 0x3A, 0x3F, 0x2E, 0x40]
@@ -26,7 +31,7 @@ def solve(b,bc):
 
     s.add(x + y + z == b)
 
-    if not s.check() == sat:  #Added error handling because it didn't previously exist
+    if not s.check() == sat:  # Added error handling because it didn't previously exist
         print(Fore.GREEN + "Badchars too restrictive, shellcode generation failed. Consider using a different payload, your shellcode is too (mathematically) powerful.")
         exit(0)
     s.model()
@@ -41,7 +46,7 @@ def normalize(bc):
     """I tried to adapt this into a normalizer."""
     s = Solver()
     bad_chars = [0x20, 0x80, 0x0A, 0x0D, 0x2F, 0x3A, 0x3F, 0x2E, 0x40]
-    bad_chars += bc #I added ability to specify additional badchars
+    bad_chars += bc  # To specify additional badchars
     x, y = BitVecs('x y', 32)
     variables = [x, y]
 
@@ -52,11 +57,11 @@ def normalize(bc):
             for c in bad_chars:
                 s.add(Extract(k+7, k, var) != BitVecVal(c, 8))
 
-    s.add(x&y==0)
+    s.add(x & y == 0)
 
-    if not s.check()==sat: #Added error handling because it didn't previously exist
-        print(Fore.GREEN+"Normalizer incompatible with badchars, consider using the -a flag to enable sub based normalizer or use a custom normalizer (-n)")
-        exit(0);
+    if not s.check() == sat:  # Added error handling because it didn't previously exist
+        print(Fore.GREEN + "Normalizer incompatible with badchars, consider using the -a flag to enable sub based normalizer or use a custom normalizer (-n)")
+        exit(0)
     s.model()
     r = []
     for i in s.model():
@@ -65,11 +70,19 @@ def normalize(bc):
     return r
 
 
+def normalize_input_shellcode(shellcode):
+    """Normalize the shellcode according to several common input types."""
+    shellcode = shellcode.replace(' ', '')
+    shellcode = shellcode.replace('\\x', '')
+    shellcode = shellcode.replace('\\X', '')
+    return shellcode
+
+
 def hexforml(val):
     vh = hex(val)  # Convert to hex
     vhs = vh[2:]  # Remove '0x'
-    vhr = "".join(map(str.__add__, vhs[-2::-2],vhs[-1::-2])) #A more consise way to reverse every two bytes than I was previously using
-    return "\\x" + "\\x".join(a + b for a, b in zip(vhr[::2], vhr[1::2])) #Insert a \x before every character
+    vhr = "".join(map(str.__add__, vhs[-2::-2],vhs[-1::-2]))  # A more consise way to reverse every two bytes than I was previously using
+    return "\\x" + "\\x".join(a + b for a, b in zip(vhr[::2], vhr[1::2]))  # Insert a \x before every character
 
 
 parser = argparse.ArgumentParser() #Argument that takes shellcode
@@ -92,11 +105,11 @@ parser.add_argument("-m", "--mlgen", action="store_true",
                     help="Generates hex shellcode in \"\\xff\\xff\\xff...\" format.")
 args = parser.parse_args()
 
-if not args.shellcode: #Exit if no shellcode given
+if not args.shellcode:  # Exit if no shellcode given
     parser.print_help()
     parser.exit()
 
-scode = args.shellcode
+scode = normalize_input_shellcode(args.shellcode)
 
 if args.pad:
     if len(scode) % 2 == 0:

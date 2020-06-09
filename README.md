@@ -110,6 +110,6 @@ implemented
 - ~~Automatic badchar-based normalizer adjustment~~ implemented
 - ~~Production of shellcode in insertable format as an option~~ implemented as flag
 - ~~Return byte length of generated shellcode~~ implemented
-- Accept other shellcode formats as input
+- ~~Accept other shellcode formats as input~~
 - ~~For opt_encoder.py - ability to remove all default badchars under 0x80 besides 0x0a, 0x0d, and 0x00. Use at your own risk.~~ implemented as optional flag.
 
