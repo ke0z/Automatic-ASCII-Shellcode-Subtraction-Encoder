@@ -30,7 +30,7 @@ https://github.com/marcosValle/z3ncoder
 
 # Usage
 ```
-$ python3 encoder.py -s [shellcode] -b [badchars] -n [custom eax normalizer] -f [output file] -p -e [esp setup] -m -a
+$ python3 encoder.py -s [shellcode] -b [badchars] -n [custom eax normalizer] -f [output file] -p -v [variable name] -e [esp setup] -m -a
 ```
 ![Help menu updated](ASCII1.1.PNG)
 
