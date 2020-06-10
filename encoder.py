@@ -330,14 +330,14 @@ if args.mlgen:
     mlbufff = ""
     if not len(mlbuffer) <= 64:
         mlbufformat = wrap(mlbuffer, 64)
-        mlbufff = "'\n{} += '".format(variable).join(mlbufformat)
+        mlbufff = "'\n{} += b'".format(variable).join(mlbufformat)
     else:
         mlbufff = mlbuffer
     print(Fore.GREEN + "\n--------------------------------------------------------------------\n") #Printing time
     print(Fore.GREEN + "Shellcode length: "+str(int(len(mlbuffer)/4)))
     print(Fore.GREEN + "Shellcode Output:\n")
 
-    print(Fore.WHITE + "{} = '".format(variable) + mlbufff+"'" + "\n")
+    print(Fore.WHITE + "{} =  b'".format(variable) + mlbufff+"'" + "\n")
 
 if args.file:
     asmfile = open(args.file, "w")
