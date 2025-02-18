@@ -161,16 +161,23 @@ for i in range(0, len(resplit)):
 
 reversesc = resplit[::-1] #Reverse the order of the elements to push to the stack
 
+# Convert elements of reversesc to integers
+reversesc_int = [int(x, 16) for x in reversesc]
+
 print(Fore.GREEN + "\n--------------------------------------------------------------------\n")
 print(Fore.GREEN + "Shellcode Reversed and Formatted for Stack:\n")
 print(Fore.WHITE + '\n'.join(reversesc))
 
 hexsc = reversesc
+
+# Clean up hexsc list to ensure valid hexadecimal strings
+hexsc = [h.replace('\\x', '') for h in hexsc]
+
 reciporical = [None]*len(hexsc)
-for i in range(0, len(hexsc)):  # Get the reciporical of every hex string aftr converting it to an int
+for i in range(0, len(hexsc)):  # Get the reciprocal of every hex string after converting it to an int
     hexsc[i] = int(hexsc[i], 16)
     f = hexsc[i]
-    reciporical[i] = 0xFFFFFFFF-f + 1
+    reciporical[i] = 0xFFFFFFFF - f + 1
 
 precip = reciporical
 for i in range(0, len(precip)):
@@ -257,7 +264,7 @@ for i in range(0, len(reciporical)):  # Assembly output
             sumCheck += h
         checksum = hex(sumCheck & (2**32-1))  # remove annoying extra byte that sometimes appears and does not effect acccuracy
         buffer += ";~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-        buffer += ";0xFFFFFFFF - "+hex(reversesc[i])+" + 1 = "+precip[i]+"\n"
+        buffer += ";0xFFFFFFFF - "+hex(reversesc_int[i])+" + 1 = "+precip[i]+"\n"
         buffer += ";Verified: "+checksum+" = "+precip[i]+"\n\n"
         if args.normalizer:
             norm = args.normalizer.split("\\n")
